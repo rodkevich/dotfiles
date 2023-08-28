@@ -8,6 +8,9 @@ let mapleader="\<SPACE>"
 call plug#begin(has('nvim') ? stdpath('data') . '/plugged' : '~/.vim/plugged')
 
 " -- spis vykarystoŭvanych ubudoŭ
+Plug 'hashivim/vim-hashicorp-tools'
+Plug 'AndrewRadev/splitjoin.vim' " [gS] [gJ]
+Plug 'shmup/vim-sql-syntax'
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'ellisonleao/glow.nvim'
 Plug 'PhilRunninger/nerdtree-visual-selection'
@@ -45,6 +48,7 @@ Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
+
 Plug 'quangnguyen30192/cmp-nvim-ultisnips'
 
 Plug 'nvim-neotest/neotest-go'
@@ -53,18 +57,13 @@ Plug 'nvim-neotest/neotest'
 Plug 'romgrk/doom-one.vim'
 Plug 'preservim/nerdtree'
 Plug 'jistr/vim-nerdtree-tabs'
-
 Plug 'nvim-tree/nvim-tree.lua'
 Plug 'nvim-tree/nvim-web-devicons' " nieabaviazkovy
-
 Plug 'phaazon/hop.nvim' 
 Plug 'terryma/vim-expand-region' " [+] [-]
-
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.x' }
-
 Plug 'rmagatti/goto-preview'
-
 Plug 'https://github.com/alok/notational-fzf-vim'
 Plug 'JASONews/glow-hover'
 call plug#end()
@@ -117,26 +116,31 @@ set showtabline=1
 set foldmethod=syntax "manual
 set foldnestmax=1
 set foldcolumn=1
-
 " -- koliery
 set background=dark
 colorscheme doom-one
 " colorscheme papercolor
 " set background=light
-
 " -- vydalić [~] i [|] simvaly
 set fillchars=eob:\ 
 set fillchars+=vert:\ 
 
-" -- vylučyć numar radka kursora [biez radka kursora]
+" -- vylučyć numar radka kursora 
+" -- [biez radka kursora]
 set cursorline
 set cursorlineopt=number
+" Do not show matching brackets by flickering
+set noshowmatch
+set viminfo='1000
 
 " -- ubudoba dlia natatak
 nnoremap <silent> <leader>n :NV<CR>
 
 " -- pierakliučennie pamiž dvuma apošnimi bufierami
 nnoremap <silent> <0> <cmd>exe v:count ? v:count . 'b' : 'b' . (bufloaded(0) ? '#' : 'n')<cr>
+
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
 
 " -- pamier akna dreva fajlaŭ
 let NERDTreeWinSize=20
@@ -164,7 +168,8 @@ highlight! HoverFloatBorder ctermbg=None ctermfg=255
 " -- previw markdown in vim
 nmap <leader>o :Glow %<cr>
 
-" -- vydalić bliki [dlia vykarystannia z prazrystym terminalam]
+" -- vydalić bliki 
+" -- [dlia vykarystannia z prazrystym terminalam]
 hi CursorLineNr guifg=LightCyan
 hi CursorLineNr guibg=NONE
 hi LineNr guibg=NONE
@@ -222,7 +227,8 @@ nnoremap N Nzzzv
 noremap <C-d> <C-d>zz
 noremap <C-u> <C-u>zz
 
-" -- pieranaznačyć H i L (vierchniaja, nižniaja častka ekrana na lievy i pravy kaniec radka)
+" -- pieranaznačyć H i L 
+" -- (vierchniaja, nižniaja častka ekrana na lievy i pravy kaniec radka)
 nnoremap H ^
 nnoremap L $
 vnoremap H ^
@@ -231,7 +237,8 @@ vnoremap L g_
 " -- uva ŭ kataloh
 nmap <leader>w :cd %:h<CR>
 
-" -- nie ruchacca daliej pa [*]. Pry nieabchodnasci vykarystoŭvajcie [n]
+" -- nie ruchacca daliej pa [*]. 
+" -- pry nieabchodnasci vykarystoŭvajcie [n]
 nnoremap <silent> * :let stay_star_view = winsaveview()<cr>*:call winrestview(stay_star_view)<cr>
 
 " -- vizuaĺny režym
@@ -265,7 +272,8 @@ nmap <M-j> <NOP>
 nmap <M-l> <NOP>
 nmap <M-3> <NOP>
 
-" -- pieramiaščać radok tekstu z dapamohaj ALT+[jk] abo Command+[jk] na mac
+" -- pieramiaščać radok tekstu 
+" -- z dapamohaj ALT+[jk] abo Command+[jk] na mac
 nmap <M-j> mz:m+<cr>`z
 nmap <M-k> mz:m-2<cr>`z
 vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
@@ -285,6 +293,7 @@ function! s:create_go_doc_comment()
   execute ":norm I// \<Esc>$" | execute ":norm A "
 endfunction
 
+" -- dadać camentar go funkcyi
 nnoremap <leader>ic :<C-u>call <SID>create_go_doc_comment()<CR>
 
 " -- pierakliučyć akno chutkaha vypraŭliennia
@@ -311,7 +320,7 @@ let g:NERDAltDelims_java = 1
 let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
 let g:NERDTreeWinPos = "left"
 
-" -- Nerdcomment plugin
+" -- nerdcomment plugin
 " -- dazvolić kamientavać i inviertavać pustyja radki (karysna pry kamientavanni rehijonu)
 let g:NERDCommentEmptyLines = 1
 " -- ukliučyć abrazannie kančatkovych prabielaŭ pry vydalienni kamientaryjaŭ
@@ -319,7 +328,7 @@ let g:NERDTrimTrailingWhitespace = 1
 " -- pravieryć, kamiencirujucca ci nie kamiencirujucca ŭsie vybranyja radki
 let g:NERDToggleCheckAllLines = 1
 
-" -- Git blame
+" -- git blame
 vnoremap <leader>gb :Git blame<CR>
 nnoremap <leader>gb :Git blame<CR>
 
@@ -413,7 +422,6 @@ let g:go_rename_command = "gopls"
 let g:go_test_show_name = 1
 let g:go_fmt_options = 1
 let g:go_get_update = 0
-
 let g:go_debug_windows = {
       \ 'vars':  'leftabove 35vnew',
       \ 'stack': 'botright 10new',
@@ -462,14 +470,15 @@ noremap <Right> <NOP>
 " -- `2>/dev/null` prymušaje kamandu cicha pravaĺvacca, tak što, kali my nie
 " -- u git repo, spis budzie pustym
 function! s:gitModified()
-    let files = systemlist('git ls-files -m 2>/dev/null')
-    return map(files, "{'line': v:val, 'path': v:val}")
+  let files = systemlist('git ls-files -m 2>/dev/null')
+  return map(files, "{'line': v:val, 'path': v:val}")
 endfunction
 
-" -- toje samaje, što i vyšej, alie pakazvać nieadsočvanyja fajly, ušanoŭvajučy .gitignore
+" -- toje samaje, što i vyšej, 
+" -- alie pakazvać nieadsočvanyja fajly, ušanoŭvajučy .gitignore
 function! s:gitUntracked()
-    let files = systemlist('git ls-files -o --exclude-standard 2>/dev/null')
-    return map(files, "{'line': v:val, 'path': v:val}")
+  let files = systemlist('git ls-files -o --exclude-standard 2>/dev/null')
+  return map(files, "{'line': v:val, 'path': v:val}")
 endfunction
 
 " -- vyznačyć karaniovy kataloh
@@ -603,30 +612,30 @@ lua <<EOF
     })
   })
 
-  -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
-  cmp.setup.cmdline({ '/', '?' }, {
-    mapping = cmp.mapping.preset.cmdline(),
-    sources = {
-      { name = 'buffer' }
-    }
-  })
-
-  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-  cmp.setup.cmdline(':', {
-    mapping = cmp.mapping.preset.cmdline(),
-    sources = cmp.config.sources({
-      { name = 'path' }
-    }, {
-      { name = 'cmdline' }
-    })
-  })
-
-  -- Set up lspconfig.
-  local capabilities = require('cmp_nvim_lsp').default_capabilities()
-  -- each lsp server you've enabled.
-  require('lspconfig')['gopls'].setup {
-    capabilities = capabilities
+-- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline({ '/', '?' }, {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = {
+    { name = 'buffer' }
   }
+ })
+
+-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline(':', {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = cmp.config.sources({
+    { name = 'path' }
+  }, {
+    { name = 'cmdline' }
+  })
+})
+
+-- Set up lspconfig.
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+-- each lsp server you've enabled.
+require('lspconfig')['gopls'].setup {
+  capabilities = capabilities
+}
 
   -- https://github.com/nvim-tree/nvim-tree.lua
   -- disable netrw at the very start of your init.lua
@@ -707,15 +716,13 @@ lua <<EOF
   api.config.mappings.default_on_attach(bufnr)
 
   -- custom mappings
-  vim.keymap.set('n', '<C-t>', api.tree.change_root_to_parent,        opts('Up'))
+  -- vim.keymap.set('n', '<C-t>', api.tree.change_root_to_parent,        opts('Up'))
   vim.keymap.set('n', '?',     api.tree.toggle_help,                  opts('Help'))
 end
 
 -- pass to setup along with your other options
 require("nvim-tree").setup {
-  ---
-  on_attach = my_on_attach,
-  ---
+	on_attach = my_on_attach,
 }
 
   local function tab_win_closed(winnr)
@@ -747,11 +754,11 @@ require("nvim-tree").setup {
 end
 
 vim.api.nvim_create_autocmd("WinClosed", {
-  callback = function ()
-    local winnr = tonumber(vim.fn.expand("<amatch>"))
-    vim.schedule_wrap(tab_win_closed(winnr))
-  end,
-  nested = true
+	callback = function ()
+		local winnr = tonumber(vim.fn.expand("<amatch>"))
+		vim.schedule_wrap(tab_win_closed(winnr))
+	end,
+	nested = true
 })
 
 -- HOP
@@ -768,23 +775,22 @@ vim.keymap.set('', 'f', function() hop.hint_patterns() end, {remap=true})
 require'hop'.setup()
 
 require'glow-hover'.setup {
-       -- The followings are the default values
-       max_width = 50,
-       padding = 10,
-       border = 'shadow',
-       glow_path = 'glow'
-   }
+	-- The followings are the default values
+	max_width = 50,
+	padding = 10,
+	border = 'shadow',
+	glow_path = 'glow'
+}
 
 -- search like ide
 function vim.getVisualSelection()
 	vim.cmd('noau normal! "vy"')
 	local text = vim.fn.getreg('v')
 	vim.fn.setreg('v', {})
-
 	text = string.gsub(text, "\n", "")
 	if #text > 0 then
 		return text
-	else
+		else
 		return ''
 	end
 end
@@ -806,34 +812,33 @@ keymap('v', '<space>G', function()
 end, opts)
 
 -- https://github.com/JASONews/glow-hover.nvim
-require'glow-hover'.setup {
-        -- The followings are the default values
-        max_width = 50,
-        padding = 10,
-        border = 'shadow',
-        glow_path = 'glow'
-    }
+require'glow-hover'.setup( {
+	-- The followings are the default values
+	max_width = 50,
+	padding = 10,
+	border = 'shadow',
+	glow_path = 'glow'
+})
 
 -- https://github.com/ellisonleao/glow.nvim
-require('glow').setup(
-{
-  border = "", -- floating window border config
-  style = "dark", -- filled automatically with your current editor background, you can override using glow json style
-  pager = false,
-  width = 80,
-  height = 100,
-  width_ratio = 0.7, -- maximum width of the Glow window compared to the nvim window size (overrides `width`)
-  height_ratio = 0.7,
+require('glow').setup( {
+	border = "", -- floating window border config
+	style = "dark", -- filled automatically with your current editor background, you can override using glow json style
+	pager = false,
+	width = 80,
+	height = 100,
+	width_ratio = 0.7, -- maximum width of the Glow window compared to the nvim window size (overrides `width`)
+	height_ratio = 0.7,
 })
 
 vim.opt.list = true
 vim.opt.listchars:append "space:⋅"
 vim.opt.listchars:append "eol:↴"
 
-require("indent_blankline").setup {
-    space_char_blankline = " ",
-    show_current_context = true,
-    show_current_context_start = true,
-}
+require("indent_blankline").setup( {
+	space_char_blankline = " ",
+	show_current_context = true,
+	show_current_context_start = true,
+})
 
 EOF
